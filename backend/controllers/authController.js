@@ -13,6 +13,42 @@ const generateToken = (id) => {
 //@access Public
 export const register = async (req, res, next) => {
   try {
+    const { username, email, password } = req.body;
+
+    //check if user exists
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      return res.status(400).json({
+        success: false,
+        error:
+          userExists.email === email
+            ? "Email already in use"
+            : "Username already in use",
+        statusCode: 400,
+        message: "User already exists",
+      });
+    }
+
+    // create user
+    const user = await User.create({ username, email, password });
+
+    //generate token
+    const token = generateToken(user._id);
+    res.status(201).json({
+      success: true,
+      data: {
+        user: {
+          id: user._id,
+          username,
+          email,
+          profileImage,
+          createdAt,
+        },
+        token,
+      },
+      message: "User registered successfully",
+    });
   } catch (error) {
     next(error);
   }
