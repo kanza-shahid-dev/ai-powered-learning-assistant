@@ -1,5 +1,5 @@
-const errorHandler = (err, req, res, next) => {
-  const statusCode = res.statusCode || 500;
+const errorHandler = (err, req, res) => {
+  let statusCode = res.statusCode || 500;
   let message = err.message || "Server Error";
 
   //Mongoose bad ObjectId
@@ -38,7 +38,7 @@ const errorHandler = (err, req, res, next) => {
     statusCode = 401;
   }
 
-  console.eror("Error:", {
+  console.error("Error:", {
     message: err.message,
     stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
   });
