@@ -8,6 +8,7 @@ import errorHandler from "./middleware/errorHandler.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import documentRoutes from "./routes/documentRoutes.js";
+import flashcardRoutes from "./routes/flashcardRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,6 +32,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 //Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/documents", documentRoutes);
+app.use("/api/flashcards", flashcardRoutes);
 
 app.use(errorHandler);
 
@@ -41,10 +43,15 @@ app.use((req, res) => {
 
 //Start server
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  connectDB();
-  console.log(`Server is running on port ${PORT}`);
-});
+const startServer = async () => {
+  await connectDB();
+
+  app.listen(PORT, () => {
+    console.log("🚀 Server running on port ", PORT);
+  });
+};
+
+startServer();
 
 process.on("unhandledRejection", (err) => {
   console.error(`Error: ${err.message}`);
