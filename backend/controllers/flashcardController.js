@@ -15,6 +15,25 @@ export const getAllFlashcardSets = async (req, res, next) => {
 //@access Private
 export const getFlashcards = async (req, res, next) => {
   try {
+    const flashcards = await Flashcard.findOne({
+      documentId: req.params.documentId,
+      userId: req.user._id,
+    })
+      .populate("documentId", "title fileName")
+      .sort({ createdAt: -1 });
+    if (!flashcards) {
+      return res.status(404).json({
+        success: false,
+        error: "Flashcards not found",
+        statusCode: 404,
+        message: "Flashcards not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      data: flashcards,
+      count: flashcards.length,
+    });
   } catch (error) {
     next(error);
   }
